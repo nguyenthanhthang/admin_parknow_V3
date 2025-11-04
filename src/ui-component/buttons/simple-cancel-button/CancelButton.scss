@@ -1,0 +1,58 @@
+.btn-simple-cancel {
+  --color: #00a97f;
+  padding: 0.8em 1.7em;
+  background-color: #03fc3d;
+  border-radius: 1.5em;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.5s;
+  font-weight: 700;
+  font-size: 17px;
+  border: 1px solid;
+  font-family: inherit;
+  width: 150px;
+  height: 52px;
+  cursor: pointer;
+  color: #ffff;
+  z-index: 1;
+  justify-content: center;
+}
+
+.btn-simple-cancel::before,
+.btn-simple-cancel::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 50px;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+  background-color: var(--color);
+  transition: 1s ease;
+}
+
+.btn-simple-cancel::before {
+  top: -1em;
+  left: -1em;
+}
+
+.btn-simple-cancel::after {
+  left: calc(100% + 1em);
+  top: calc(100% + 1em);
+}
+
+.btn-simple-cancel:hover::before,
+.btn-simple-cancel:hover::after {
+  height: 410px;
+  width: 410px;
+}
+
+.btn-simple-cancel:hover {
+  color: rgb(10, 25, 30);
+}
+
+.btn-simple-cancel:active {
+  filter: brightness(0.8);
+}

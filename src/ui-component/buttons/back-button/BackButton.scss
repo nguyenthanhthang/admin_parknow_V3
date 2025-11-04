@@ -1,0 +1,73 @@
+.btn-back {
+  cursor: pointer;
+  font-weight: 700;
+  font-family: Helvetica, "sans-serif";
+  transition: all 0.2s;
+  padding: 10px 20px;
+  color: #ffff;
+  border-radius: 100px;
+  background: #94c024;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.btn-back:hover {
+  background: #c23d08;
+  outline: 0.1em solid transparent;
+  outline-offset: 0.2em;
+  box-shadow: 0 0 0.4em 0 #c23d08;
+}
+
+.btn-back > svg {
+  width: 34px;
+  margin-right: 10px;
+  color: #ffff;
+  transition: transform 0.3s ease-in-out;
+  transform: rotate(180deg);
+}
+
+.btn-back:hover svg {
+  transform: translateX(-5px) rotate(180deg);
+}
+
+.btn-back:active {
+  transform: scale(1.1);
+}
+
+.btn-back-register {
+  display: flex;
+  height: 3em;
+  width: 140px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 45px;
+  letter-spacing: 1px;
+  font-size: 17px;
+  font-weight: bold;
+  transition: all 0.2s linear;
+  cursor: pointer;
+  border: none;
+  background: rgb(103, 221, 35);
+  color: #fff;
+}
+
+.btn-back-register > svg {
+  margin-right: 5px;
+  margin-left: 5px;
+  font-size: 30px;
+  font-weight: 400;
+  transition: all 0.4s ease-in;
+}
+
+.btn-back-register:hover > svg {
+  font-size: 1.2em;
+  transform: translateX(-5px);
+}
+
+.btn-back-register:hover {
+  box-shadow: 9px 9px 33px #d1d1d1, -9px -9px 33px #ffffff;
+  transform: translateY(-2px);
+}

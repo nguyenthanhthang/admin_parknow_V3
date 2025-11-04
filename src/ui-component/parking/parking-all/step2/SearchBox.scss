@@ -1,0 +1,33 @@
+.search-box-container {
+  display: flex;
+  align-items: center;
+  height: 2.5em;
+  padding: 5px 0px 5px 10px;
+  /* Rest of the styles */
+}
+
+.search-box-input {
+  width: 100%;
+  margin-right: 10px;
+  border-radius: 24px;
+  background: #fff;
+  border: none;
+  /* Rest of the styles */
+}
+
+.search-box-button {
+  box-shadow: none;
+  color: #333333c7;
+  background-color: transparent;
+  min-width: 50px;
+  /* Rest of the styles */
+
+  &:hover {
+    background-color: transparent;
+    /* Rest of the styles */
+  }
+
+  &.active {
+    color: #000;
+  }
+}

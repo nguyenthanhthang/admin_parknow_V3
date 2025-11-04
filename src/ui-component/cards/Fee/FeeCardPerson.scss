@@ -1,0 +1,104 @@
+.card-person {
+  width: 500px;
+  height: 350px;
+  background: white;
+  border-radius: 30px;
+  box-shadow: 15px 15px 30px #bebebe, -15px -15px 30px #ffffff;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.img-person {
+  width: 100%;
+  height: 35%;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  background: linear-gradient(#9149ee, #9198e5);
+  display: flex;
+  align-items: top;
+  justify-content: right;
+}
+
+.save-person {
+  transition: 0.2s ease-in-out;
+  border-radius: 10px;
+  margin: 20px;
+  width: 30px;
+  height: 30px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-person {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: space-around;
+}
+
+.save-person .svg-person {
+  transition: 0.2s ease-in-out;
+  width: 15px;
+  height: 15px;
+}
+
+.icon-box-person {
+  margin-top: 15px;
+  width: 70%;
+  padding: 10px;
+  background-color: #e3fff9;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.icon-box-person svg {
+  width: 17px;
+}
+
+.text-person .h3-person {
+  // font-family: "Lucida Sans" sans-serif;
+  font-size: 25px;
+  font-weight: 600;
+  color: black;
+  margin-top: 5px;
+}
+
+.text-person .p-person {
+  // font-family: "Lucida Sans" sans-serif;
+  color: #000;
+  font-weight: 600;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.text-person .type-person {
+  // font-family: "Lucida Sans" sans-serif;
+  color: #000;
+  font-weight: 500;
+  font-size: 25px;
+}
+
+.price-person {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+}
+
+.price-person > .money-person {
+  font-size: 35px;
+  font-weight: 700;
+  padding: 10px;
+  color: #9149ee;
+}
+
+.price-person .month-person {
+  font-weight: 510;
+  font-size: 22px;
+  margin-top: 6px;
+  color: #9149ee;
+}

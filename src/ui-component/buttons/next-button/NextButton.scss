@@ -1,0 +1,37 @@
+.btn-next {
+  cursor: pointer;
+  font-weight: 700;
+  font-family: Helvetica, "sans-serif";
+  transition: all 0.2s;
+  padding: 10px 20px;
+  color: #ffff;
+  border-radius: 100px;
+  background: #6225e6;
+  cursor: pointer;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+}
+
+.btn-next:hover {
+  background: #064789;
+  outline: 0.1em solid transparent;
+  outline-offset: 0.2em;
+  box-shadow: 0 0 0.4em 0 #064789;
+}
+
+.btn-next > svg {
+  width: 34px;
+  margin-left: 10px;
+  color: #ffff;
+  transition: transform 0.3s ease-in-out;
+}
+
+.btn-next:hover svg {
+  transform: translateX(5px);
+}
+
+.btn-next:active {
+  transform: scale(1.1);
+}

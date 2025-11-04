@@ -1,0 +1,83 @@
+.card__balance {
+  width: 200px;
+  height: 265px;
+  background: white;
+  border-radius: 30px;
+  box-shadow: 15px 15px 30px #bebebe, -15px -15px 30px #ffffff;
+  transition: 0.2s ease-in-out;
+}
+
+.card__balance-img {
+  width: 100%;
+  height: 42%;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  background: linear-gradient(#e66465, #9198e5);
+  display: flex;
+  align-items: top;
+  justify-content: right;
+}
+
+.card__balance-save {
+  transition: 0.2s ease-in-out;
+  border-radius: 10px;
+  margin: 20px;
+  width: 30px;
+  height: 30px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__balance-text {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: space-around;
+}
+
+.card__balance-text .svg {
+  transition: 0.2s ease-in-out;
+  width: 150px;
+  height: 50px;
+  margin-top: 10px;
+}
+
+// .card__balance-text .svg:hover {
+//   transform: scale(1.2) rotate(15deg);
+// }
+
+.card__balance-text .h3 {
+  // font-family: "Lucida Sans" sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  color: black;
+  text-align: center;
+  padding-bottom: 5px;
+}
+
+.card__balance-text .p {
+  // font-family: Arial, Helvetica, sans-serif;
+  color: #999999;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.card__balance:hover {
+  cursor: pointer;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card__balance-save:hover {
+  transform: scale(1.1) rotate(10deg);
+}
+
+.card__balance-save:hover .svg {
+  fill: #ced8de;
+}
+
+.card__balance:hover .card__balance-text svg {
+  transform: scale(1.2) rotate(15deg);
+}

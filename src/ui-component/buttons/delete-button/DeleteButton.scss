@@ -1,0 +1,62 @@
+.btn-delete {
+  position: relative;
+  width: 135px;
+  height: 55px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: 1px solid #cc0000;
+  background-color: #e50000;
+  overflow: hidden;
+  border-radius: 26px;
+  cursor: pointer;
+}
+
+.btn-delete,
+.btn-delete__icon,
+.btn-delete__text {
+  transition: all 0.3s;
+}
+
+.btn-delete .btn-delete__text {
+  transform: translateX(35px);
+  color: #fff;
+  font-weight: 600;
+  margin-left: 0.4rem;
+}
+
+.btn-delete .btn-delete__icon {
+  position: absolute;
+  transform: translateX(88px);
+  height: 100%;
+  width: 47px;
+  background-color: #cc0000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete .svg {
+  width: 20px;
+}
+
+.btn-delete:hover {
+  background: #cc0000;
+}
+
+.btn-delete:hover .btn-delete__text {
+  color: transparent;
+}
+
+.btn-delete:hover .btn-delete__icon {
+  width: 148px;
+  transform: translateX(-10px);
+}
+
+.btn-delete:active .btn-delete__icon {
+  background-color: #b20000;
+}
+
+.btn-delete:active {
+  border: 1px solid #b20000;
+}
