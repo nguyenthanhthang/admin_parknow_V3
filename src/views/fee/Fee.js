@@ -1,5 +1,5 @@
 import { Grid, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ImFilesEmpty } from "react-icons/im";
 import CreateButton from "ui-component/buttons/create-button/CreateButton";
 import FeeCardBus from "ui-component/cards/Fee/FeeCardBus";
@@ -21,6 +21,22 @@ const Fee = () => {
   const token = localStorage.getItem("tokenAdmin");
   const signalRUrl = config.signalRUrl;
 
+  const fetchData = useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
+    setLoading(true);
+    const response = await fetch(`${apiUrl}/fee-management`, requestOptions);
+
+    const data = await response.json();
+    setData(data.data);
+    setLoading(false);
+  }, [apiUrl, token]);
+
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(`${signalRUrl}`)
@@ -41,24 +57,7 @@ const Fee = () => {
     return () => {
       connection.stop();
     };
-  }, []);
-
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
-
-  const fetchData = async () => {
-    setLoading(true);
-    const response = await fetch(`${apiUrl}/fee-management`, requestOptions);
-
-    const data = await response.json();
-    setData(data.data);
-    setLoading(false);
-  };
+  }, [fetchData, signalRUrl]);
 
   const handleOpenModal = () => {
     setIsOpen(true);

@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ImFilesEmpty } from "react-icons/im";
 import { useParams } from "react-router";
 import Loading from "ui-component/back-drop/Loading";
@@ -25,15 +25,15 @@ const ParkingPriceOfParking = () => {
 
   const token = localStorage.getItem("token");
   const apiUrl = config.apiUrl;
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
     const response = await fetch(
       `${apiUrl}/parkings/parking-price/${priceId}`,
       requestOptions
@@ -41,11 +41,11 @@ const ParkingPriceOfParking = () => {
 
     const data = await response.json();
     setRows(data.data);
-  };
+  }, [apiUrl, token, priceId]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleCreate = () => {
     setIsDetail(true);

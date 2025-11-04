@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -12,7 +12,6 @@ import {
   Chip,
   ClickAwayListener,
   Divider,
-  Grid,
   List,
   ListItemButton,
   ListItemIcon,
@@ -67,31 +66,30 @@ const ProfileSection = () => {
     navigate("/login");
   };
 
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `bearer ${token}`,
-    },
-  };
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `bearer ${token}`,
+      },
+    };
     const response = await fetch(
       `${apiUrl}/staff-account-management/${staffData?._id}`,
       requestOptions
     );
 
-    const data = response.json();
+    const data = await response.json();
     if (data) {
       setData(data.data);
     }
-  };
+  }, [apiUrl, token, staffData?._id]);
 
   useEffect(() => {
     if (token) {
       fetchData();
     }
-  }, []);
+  }, [token, fetchData]);
 
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {

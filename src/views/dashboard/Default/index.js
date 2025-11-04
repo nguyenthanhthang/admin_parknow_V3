@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 // material-ui
 import { Grid } from "@mui/material";
@@ -24,14 +24,15 @@ const Dashboard = () => {
 
   const apiUrl = config.apiUrl;
   const token = localStorage.getItem("tokenAdmin");
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
-  const fetchData = async () => {
+
+  const fetchData = useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
     setLoading(true);
     const response = await fetch(
       `${apiUrl}/admin/chart/business/total`,
@@ -61,11 +62,11 @@ const Dashboard = () => {
     }
 
     setLoading(false);
-  };
+  }, [apiUrl, token]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   if (isLoading) {
     return <Loading loading={isLoading} />;

@@ -8,8 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import SaveButton from "ui-component/buttons/save-button/SaveButton";
 import CancelButton from "ui-component/buttons/cancel-button/CancelButton";
 import UploadAvatar from "ui-component/upload-file/upload-staff/UploadAvatar";
@@ -44,33 +43,31 @@ const ItemModal = ({ modalType }) => {
   const apiUrl = config.apiUrl;
   const token = localStorage.getItem("tokenAdmin");
 
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    if (!staffId) return;
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
     setLoading(true);
-    if (staffId) {
-      const response = await fetch(
-        `${apiUrl}/staff-account-management/${staffId}`,
-        requestOptions
-      );
+    const response = await fetch(
+      `${apiUrl}/staff-account-management/${staffId}`,
+      requestOptions
+    );
 
-      const responseData = await response.json();
-      if (responseData) {
-        setData(responseData.data);
-      }
-      setLoading(false);
+    const responseData = await response.json();
+    if (responseData) {
+      setData(responseData.data);
     }
-  };
+    setLoading(false);
+  }, [apiUrl, token, staffId]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     if (avatar) {

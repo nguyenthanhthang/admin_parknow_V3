@@ -1,7 +1,6 @@
 import { Grid, TextField, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { closeModal } from "store/modalReducer";
 import Loading from "ui-component/back-drop/Loading";
@@ -21,15 +20,14 @@ const ItemModal = ({ modalType }) => {
   const apiUrl = config.apiUrl;
   const token = localStorage.getItem("tokenAdmin");
 
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
     setLoading(true);
     const response = await fetch(
       `${apiUrl}/staff-account-management/${staffId}`,
@@ -41,11 +39,11 @@ const ItemModal = ({ modalType }) => {
       setData(data.data);
     }
     setLoading(false);
-  };
+  }, [apiUrl, token, staffId]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleCloseModal = () => {
     dispatch(closeModal(modalType));

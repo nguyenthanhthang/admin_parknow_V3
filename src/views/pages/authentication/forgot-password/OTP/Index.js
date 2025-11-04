@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useTheme } from "@mui/material/styles";
 import {
   Grid,
@@ -67,10 +67,10 @@ const OTP = () => {
     }
   };
 
-  const sendOTP = () => {
+  const sendOTP = useCallback(() => {
     const generatedOTP = generateOTP();
     sendOTPEmail(email, generatedOTP);
-  };
+  }, [email, apiLink]);
 
   useEffect(() => {
     sendOTP();
@@ -82,14 +82,14 @@ const OTP = () => {
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
+  }, [sendOTP]);
 
   useEffect(() => {
     if (elapsedTime === 60) {
       sendOTP();
       setElapsedTime(0);
     }
-  }, [elapsedTime]);
+  }, [elapsedTime, sendOTP]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

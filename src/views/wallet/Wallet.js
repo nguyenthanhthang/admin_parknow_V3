@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Loading from "ui-component/back-drop/Loading";
 // import RechargeButton from "ui-component/buttons/recharge-button/RechargeButton";
 import MainCard from "ui-component/cards/MainCard";
@@ -14,25 +14,24 @@ const Wallet = () => {
   const apiUrl = config.apiUrl;
   const token = localStorage.getItem("tokenAdmin");
 
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `bearer ${token}`,
-    },
-  };
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `bearer ${token}`,
+      },
+    };
     setLoading(true);
     const response = await fetch(`${apiUrl}/admin-wallet`, requestOptions);
     const data = await response.json();
     setData(data.data);
     setLoading(false);
-  };
+  }, [apiUrl, token]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   if (loading) {
     <Loading loading={loading} />;

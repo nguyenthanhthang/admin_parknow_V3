@@ -104,19 +104,14 @@ export default function Order() {
   const apiUrl = config.apiUrl;
   const token = localStorage.getItem("tokenAdmin");
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
-
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
     setLoading(true);
     const response = await fetch(
       `${apiUrl}/bill-management?pageNo=1&pageSize=11`,
@@ -125,7 +120,11 @@ export default function Order() {
     const data = await response.json();
     setRows(data.data);
     setLoading(false);
-  };
+  }, [apiUrl, token]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (loading) {
     // Render the Skeleton components or any other loading indicator

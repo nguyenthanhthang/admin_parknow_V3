@@ -65,15 +65,15 @@ export default function Profile() {
 
   const token = localStorage.getItem("tokenAdmin");
   const apiUrl = config.apiUrl;
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
 
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
     setLoading(true);
     const response = await fetch(
       `${apiUrl}/business-profile/business-profile/${businessId}`,
@@ -91,11 +91,11 @@ export default function Profile() {
         text: data.message,
       });
     }
-  };
+  }, [apiUrl, token, businessId]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

@@ -1,9 +1,6 @@
 import { Grid, TextField, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { closeModal } from "store/modalReducer";
+import React, { useEffect, useState, useCallback } from "react";
 import Loading from "ui-component/back-drop/Loading";
 // import SaveButton from "ui-component/buttons/save-button/SaveButton";
 import CancelButton from "ui-component/buttons/cancel-button/CancelButton";
@@ -15,9 +12,6 @@ import config from "config";
 const ItemModal = (props) => {
   const { setIsOpenDetail, id } = props;
   const theme = useTheme();
-  // const staffId = useSelector((state) => state.modal.staffId);
-
-  const dispatch = useDispatch();
 
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
@@ -25,15 +19,14 @@ const ItemModal = (props) => {
   const apiUrl = config.apiUrl;
   const token = localStorage.getItem("tokenAdmin");
 
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
     setLoading(true);
     const response = await fetch(
       `${apiUrl}/accounts/customer/${id}`,
@@ -45,11 +38,11 @@ const ItemModal = (props) => {
       setData(data.data);
     }
     setLoading(false);
-  };
+  }, [apiUrl, token, id]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleCloseModal = () => {
     setIsOpenDetail(false);

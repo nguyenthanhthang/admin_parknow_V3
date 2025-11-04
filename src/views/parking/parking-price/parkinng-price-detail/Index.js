@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ParkingPriceDetail from "./ParkingPriceDetail";
 import { useParams } from "react-router";
 import * as signalR from "@microsoft/signalr";
@@ -10,10 +10,33 @@ const PriceDetail = () => {
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
+  const apiUrl = config.apiUrl;
+  const signalRUrl = config.signalRUrl;
+
+  const fetchDataPrice = useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
+    setLoading(true);
+    const res = await fetch(
+      `${apiUrl}/timeline-management/${priceId}?pageNo=1&pageSize=11`,
+      requestOptions
+    );
+
+    const data = await res.json();
+    console.log("data", data.data);
+
+    setRows(data.data);
+    setLoading(false);
+  }, [apiUrl, token, priceId]);
 
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(config.signalRUrl)
+      .withUrl(signalRUrl)
       .build();
     console.log("connection", connection);
 
@@ -31,31 +54,7 @@ const PriceDetail = () => {
     return () => {
       connection.stop();
     };
-  }, []);
-
-  const apiUrl = config.apiUrl;
-
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
-
-  const fetchDataPrice = async () => {
-    setLoading(true);
-    const res = await fetch(
-      `${apiUrl}/timeline-management/${priceId}?pageNo=1&pageSize=11`,
-      requestOptions
-    );
-
-    const data = await res.json();
-    console.log("data", data.data);
-
-    setRows(data.data);
-    setLoading(false);
-  };
+  }, [fetchDataPrice, signalRUrl]);
 
   return (
     <>

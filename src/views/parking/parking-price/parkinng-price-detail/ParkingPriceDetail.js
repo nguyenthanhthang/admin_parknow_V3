@@ -5,7 +5,6 @@ import SearchSection from "ui-component/search-section";
 import { Grid, Typography } from "@mui/material";
 import CreateButton from "ui-component/buttons/create-button/CreateButton";
 import SubCardStaff from "ui-component/cards/SubCardStaff";
-import { useNavigate } from "react-router";
 import Loading from "ui-component/back-drop/Loading";
 import { ImFilesEmpty } from "react-icons/im";
 import { useState } from "react";
@@ -13,7 +12,6 @@ import CreateNewTimeLine from "ui-component/modal/parking-price-timeline/CreateN
 
 export default function ParkingPriceDetail(props) {
   const { rows, loading } = props;
-  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
 
