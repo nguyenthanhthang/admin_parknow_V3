@@ -182,7 +182,7 @@ const CreateNewParking = () => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(requestBody),
   };
@@ -208,7 +208,7 @@ const CreateNewParking = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(request),
       };

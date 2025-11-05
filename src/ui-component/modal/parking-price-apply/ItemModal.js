@@ -29,7 +29,7 @@ const ItemModal = ({ setIsOpen, priceId, priceName, isDetail }) => {
   const requestOptions = {
     method: "GET",
     headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+      Authorization: `Bearer ${token}`, // Replace `token` with your actual bearer token
       "Content-Type": "application/json", // Replace with the appropriate content type
     },
   };
@@ -90,7 +90,7 @@ const ItemModal = ({ setIsOpen, priceId, priceName, isDetail }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(request),
         };

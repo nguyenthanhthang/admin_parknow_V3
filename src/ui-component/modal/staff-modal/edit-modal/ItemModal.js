@@ -48,7 +48,7 @@ const ItemModal = ({ modalType }) => {
     const requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        Authorization: `Bearer ${token}`, // Replace `token` with your actual bearer token
         "Content-Type": "application/json", // Replace with the appropriate content type
       },
     };
@@ -206,11 +206,15 @@ const ItemModal = ({ modalType }) => {
         });
 
         try {
-          const response = await fetch(`${apiUrl}/staff-account-management`, {
-            ...requestOptions,
+          const requestOptions = {
             method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
             body: JSON.stringify(data),
-          });
+          };
+          const response = await fetch(`${apiUrl}/staff-account-management`, requestOptions);
           // const dataRes = await response.json();
           if (response.status === 204) {
             handleCloseModal();

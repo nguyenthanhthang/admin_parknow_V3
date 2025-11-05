@@ -32,7 +32,7 @@ const OTP = () => {
     setOTP(e.target.value);
   };
 
-  const generateOTP = () => {
+  const generateOTP = useCallback(() => {
     const length = 6;
     const chars = "0123456789";
     let result = "";
@@ -41,9 +41,9 @@ const OTP = () => {
     }
     setOtpGenerate(result);
     return result;
-  };
+  }, []);
 
-  const sendOTPEmail = async (toEmail, otp) => {
+  const sendOTPEmail = useCallback(async (toEmail, otp) => {
     const requestBody = {
       email: toEmail,
       otp: otp,
@@ -65,12 +65,12 @@ const OTP = () => {
 
     if (data.statusCode === 201) {
     }
-  };
+  }, [apiLink]);
 
   const sendOTP = useCallback(() => {
     const generatedOTP = generateOTP();
     sendOTPEmail(email, generatedOTP);
-  }, [email, apiLink]);
+  }, [email, sendOTPEmail, generateOTP]);
 
   useEffect(() => {
     sendOTP();

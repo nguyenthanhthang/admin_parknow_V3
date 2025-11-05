@@ -80,7 +80,7 @@ const ApproveParking = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(body),
         };

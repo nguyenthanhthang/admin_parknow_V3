@@ -13,6 +13,9 @@ import { useEffect } from "react";
 import User from "../../assets/images/avatar.png";
 
 const renderAvatarCell = (params) => {
+  if (!params) {
+    return <Avatar src={User} />;
+  }
   return (
     <>
       {params.value ? (
@@ -24,34 +27,61 @@ const renderAvatarCell = (params) => {
   );
 };
 
-const getCellValue = (params) => {
-  return params.value ? params.value : "-------";
-};
+// Removed unused getCellValue function
 
 const renderCellStatus = (params) => {
-  if (params.value === true) {
-    return (
-      <Chip
-        color="success"
-        label="True"
-        sx={{ padding: "10px", color: "#fff", fontWeight: "bold" }}
-      />
-    );
-  }
-  if (params.value === false) {
+  if (!params || !params.row) {
     return (
       <Chip
         color="secondary"
-        label="False"
+        label="-------"
         sx={{ padding: "8px", color: "#fff", fontWeight: "bold" }}
       />
     );
   }
+  const isActive = params.row.isActive;
+  if (isActive === true) {
+    return (
+      <Chip
+        color="success"
+        label="Đang hoạt động"
+        sx={{ padding: "10px", color: "#fff", fontWeight: "bold" }}
+      />
+    );
+  }
+  if (isActive === false) {
+    return (
+      <Chip
+        color="secondary"
+        label="Không hoạt động"
+        sx={{ padding: "8px", color: "#fff", fontWeight: "bold" }}
+      />
+    );
+  }
+  return (
+    <Chip
+      color="secondary"
+      label="-------"
+      sx={{ padding: "8px", color: "#fff", fontWeight: "bold" }}
+    />
+  );
 };
 
 const formatDateOfBirth = (dateOfBirth) => {
-  if (dateOfBirth && dateOfBirth.length >= 10) {
-    return dateOfBirth.slice(0, 10);
+  if (!dateOfBirth) {
+    return "-------";
+  }
+  // Xử lý cả string ISO date và Date object
+  if (typeof dateOfBirth === "string") {
+    // Format: "2000-01-01T00:00:00" -> "2000-01-01"
+    if (dateOfBirth.length >= 10) {
+      return dateOfBirth.slice(0, 10);
+    }
+    return dateOfBirth;
+  }
+  // Nếu là Date object
+  if (dateOfBirth instanceof Date) {
+    return dateOfBirth.toISOString().slice(0, 10);
   }
   return "-------";
 };
@@ -71,20 +101,37 @@ const columns = [
     description: "This column has a value getter and is not sortable.",
     // sortable: false,
     width: 320,
-    valueGetter: getCellValue,
+    valueFormatter: (value) => {
+      return value || "-------";
+    },
+    renderCell: (params) => {
+      const name = params.row?.name || params.value || "-------";
+      return <div>{name}</div>;
+    },
   },
   { field: "phone", headerName: "SĐT", width: 180 },
   {
     field: "dateOfBirth",
     headerName: "Ngày sinh",
     width: 270,
-    valueGetter: (params) => formatDateOfBirth(params.row.dateOfBirth),
+    valueFormatter: (value, row) => {
+      return formatDateOfBirth(value || row?.dateOfBirth);
+    },
+    renderCell: (params) => {
+      const dateOfBirth = params.row?.dateOfBirth || params.value;
+      const formattedDate = formatDateOfBirth(dateOfBirth);
+      return <div>{formattedDate}</div>;
+    },
   },
   { field: "gender", headerName: "Giới tính", width: 210 },
   {
     field: "isActive",
     headerName: "Hoạt động",
     width: 180,
+    valueGetter: (params) => {
+      if (!params || !params.row) return null;
+      return params.row.isActive;
+    },
     renderCell: renderCellStatus,
     sortable: false,
     disableColumnMenu: true,
@@ -96,7 +143,12 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
     align: "center",
-    renderCell: (params) => <Menu value={params.row.isActive} id={params.id} />,
+    renderCell: (params) => {
+      if (!params || !params.row) {
+        return null;
+      }
+      return <Menu value={params.row.isActive} id={params.id} />;
+    },
   },
 ];
 
@@ -142,14 +194,18 @@ export default function MyCustomer(props) {
             <SearchSection />
           </SubCard>
         </Grid>
-        {rows ? (
+        {rows && Array.isArray(rows) && rows.length > 0 ? (
           <div id="outer-div">
             <DataGrid
-              rows={rows}
+              rows={rows.filter((row) => row && (row.userId || row.id))} // Filter out null/undefined rows
               rowHeight={70}
               autoHeight
-              getRowId={(row) => row.userId}
+              getRowId={(row) => {
+                if (!row) return `row-${Math.random()}`;
+                return row.userId || row.id || `row-${Math.random()}`;
+              }}
               columns={columns}
+              disableRowSelectionOnClick
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 10 },

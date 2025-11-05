@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import TextareaAutosize from "@mui/base/TextareaAutosize";
+import { TextareaAutosize } from "@mui/base/TextareaAutosize";
 // import UploadFileImage from "./UploadFileImage";
 import CancelButton from "ui-component/buttons/cancel-button/CancelButton";
 import SaveButton from "ui-component/buttons/save-button/SaveButton";
@@ -24,13 +24,13 @@ const ItemModal = (props) => {
   const apiUrl = config.apiUrl;
   const token = localStorage.getItem("tokenStaff");
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     const requestOptions = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     };
 
@@ -50,11 +50,11 @@ const ItemModal = (props) => {
         text: data.message,
       });
     }
-  };
+  }, [apiUrl, token, approveParkingId]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleChangeNote = (e) => {
     const { value } = e.target;
@@ -102,7 +102,7 @@ const ItemModal = (props) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(body),
         };

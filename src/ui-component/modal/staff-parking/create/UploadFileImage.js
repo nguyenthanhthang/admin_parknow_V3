@@ -97,7 +97,7 @@ const UploadFileImage = (props) => {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `bearer ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           };
           // Make a DELETE request to the API endpoint with the image URL as a parameter

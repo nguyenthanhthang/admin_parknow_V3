@@ -19,7 +19,7 @@ const Wallet = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     };
     setLoading(true);

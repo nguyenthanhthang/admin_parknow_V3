@@ -13,32 +13,78 @@ const ParkingAll = (props) => {
   const signalRUrl = config.signalRUrl;
 
   const fetchData = useCallback(async () => {
+    // Kiểm tra token trước khi gọi API
+    if (!token) {
+      console.error("Token không tồn tại. Vui lòng đăng nhập lại.");
+      setLoading(false);
+      return;
+    }
+
     const requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        Authorization: `Bearer ${token}`, // Replace `token` with your actual bearer token
         "Content-Type": "application/json", // Replace with the appropriate content type
       },
     };
     setLoading(true);
-    const response = await fetch(
-      `${apiUrl}/admin/parking-management?pageNo=1&pageSize=11`,
-      requestOptions
-    );
-    const data = await response.json();
-    setRows(data.data);
-    setLoading(false);
+    try {
+      const response = await fetch(
+        `${apiUrl}/admin/parking-management?pageNo=1&pageSize=11`,
+        requestOptions
+      );
+      
+      // Kiểm tra lỗi 401 - Unauthorized
+      if (response.status === 401) {
+        console.error("Token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.");
+        // Xóa token cũ và redirect về login
+        localStorage.removeItem("tokenAdmin");
+        localStorage.removeItem("admin");
+        window.location.href = "/login";
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.data && Array.isArray(data.data)) {
+        // Filter out null/undefined rows và đảm bảo có parkingId
+        const validRows = data.data.filter((row) => row && (row.parkingId || row.id));
+        setRows(validRows);
+      } else {
+        setRows([]);
+      }
+    } catch (error) {
+      console.error("Error fetching parking data:", error);
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
   }, [apiUrl, token]);
 
   useEffect(() => {
+    // Kiểm tra token trước khi kết nối SignalR
+    if (!token) {
+      fetchData(); // Vẫn gọi fetchData để hiển thị lỗi
+      return;
+    }
+
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${signalRUrl}`)
+      .withUrl(`${signalRUrl}`, {
+        accessTokenFactory: () => token, // Thêm token vào SignalR connection
+      })
+      .withAutomaticReconnect()
       .build();
 
     connection
       .start()
-      .then(() => console.log("Connection started!"))
-      .catch((err) => console.error("Error: ", err));
+      .catch((err) => {
+        console.error("SignalR Connection Error: ", err);
+        // Không block UI nếu SignalR fail
+      });
 
     connection.on("LoadParkingInAdmin", () => {
       fetchData();
@@ -47,9 +93,11 @@ const ParkingAll = (props) => {
     fetchData();
 
     return () => {
-      connection.stop();
+      if (connection.state !== signalR.HubConnectionState.Disconnected) {
+        connection.stop();
+      }
     };
-  }, [fetchData, signalRUrl]);
+  }, [fetchData, signalRUrl, token]);
 
   if (loading) {
     return <Loading loading={loading} />;

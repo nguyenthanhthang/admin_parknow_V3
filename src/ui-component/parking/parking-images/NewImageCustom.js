@@ -98,7 +98,7 @@ const NewImageCustom = ({ setIsOpen }) => {
                 const requestOptions = {
                   method: "POST",
                   headers: {
-                    Authorization: `bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify(request),

@@ -19,7 +19,7 @@ const FloorParking = () => {
     const requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     };

@@ -9,7 +9,10 @@ import { ImFilesEmpty } from "react-icons/im";
 import Menu from "ui-component/business/Menu";
 
 const getCellValue = (params) => {
-  return params.value ? params.value : "-------";
+  if (!params || params.value === null || params.value === undefined) {
+    return "-------";
+  }
+  return params.value;
 };
 
 const columns = [
@@ -17,7 +20,16 @@ const columns = [
     field: "businessProfileId",
     headerName: "ID",
     width: 170,
-    valueGetter: getCellValue,
+    valueFormatter: (value) => {
+      return value || "-------";
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) {
+        return <div>-------</div>;
+      }
+      const id = params.row?.businessProfileId || params.value || "-------";
+      return <div>{id}</div>;
+    },
   },
   {
     field: "name",
@@ -25,13 +37,31 @@ const columns = [
     description: "This column has a value getter and is not sortable.",
     // sortable: false,
     width: 400,
-    valueGetter: (params) => `${params.row.name || ""}`,
+    valueFormatter: (value) => {
+      return value || "-------";
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) {
+        return <div>-------</div>;
+      }
+      const name = params.row?.name || params.value || "-------";
+      return <div>{name}</div>;
+    },
   },
   {
     field: "address",
     headerName: "Địa chỉ",
     width: 800,
-    valueGetter: getCellValue,
+    valueFormatter: (value) => {
+      return value || "-------";
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) {
+        return <div>-------</div>;
+      }
+      const address = params.row?.address || params.value || "-------";
+      return <div>{address}</div>;
+    },
   },
   {
     field: "action",
@@ -40,7 +70,12 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
     align: "center",
-    renderCell: (params) => <Menu value={params.value} id={params.id} />,
+    renderCell: (params) => {
+      if (!params || !params.row) {
+        return null;
+      }
+      return <Menu value={params.value} id={params.id} />;
+    },
   },
 ];
 
@@ -86,14 +121,18 @@ export default function MyBusiness(props) {
             <SearchSection />
           </SubCard>
         </Grid>
-        {rows ? (
+        {rows && Array.isArray(rows) && rows.length > 0 ? (
           <div id="outer-div">
             <DataGrid
-              rows={rows}
+              rows={rows.filter((row) => row && (row.businessProfileId || row.id))} // Filter out null/undefined rows
               rowHeight={70}
               autoHeight
-              getRowId={(row) => row.businessProfileId}
+              getRowId={(row) => {
+                if (!row) return `row-${Math.random()}`;
+                return row.businessProfileId || row.id || `row-${Math.random()}`;
+              }}
               columns={columns}
+              disableRowSelectionOnClick
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 10 },

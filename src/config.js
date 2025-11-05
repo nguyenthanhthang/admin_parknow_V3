@@ -7,7 +7,7 @@ const config = {
   borderRadius: 12,
   // Backend API URLs
   apiUrl: "http://103.56.161.75/api",
-  signalRUrl: "http://103.56.161.75/parknow",
+  signalRUrl: "http://103.56.161.75/parkz",
 };
 
 export default config;

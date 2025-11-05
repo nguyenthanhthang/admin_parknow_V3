@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
@@ -28,13 +28,13 @@ const ItemModal = (props) => {
   const user = localStorage.getItem("staff"); // Set the authentication status here
   const staff = JSON.parse(user);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     const requestOptions = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     };
 
@@ -54,13 +54,13 @@ const ItemModal = (props) => {
         text: data.message,
       });
     }
-  };
+  }, [apiUrl, token, approveParkingId]);
 
   useEffect(() => {
     if (isEdit) {
       fetchData();
     }
-  }, []);
+  }, [isEdit, fetchData]);
 
   const handleChangeNote = (e) => {
     const { value } = e.target;
@@ -146,7 +146,7 @@ const ItemModal = (props) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     };
@@ -192,7 +192,7 @@ const ItemModal = (props) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(body),
       };
@@ -222,7 +222,7 @@ const ItemModal = (props) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     };

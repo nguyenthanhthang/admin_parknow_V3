@@ -12,7 +12,6 @@ import { Grid, useMediaQuery } from "@mui/material";
 
 import Personal from "ui-component/profile/personal/Personal";
 import "./Profile.scss";
-import Business from "ui-component/profile/business/Business";
 import { useParams } from "react-router";
 import ParkingAll from "views/parking/all-parking-business/Index";
 import Swal from "sweetalert2";
@@ -33,7 +32,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -67,29 +66,104 @@ export default function Profile() {
   const apiUrl = config.apiUrl;
 
   const fetchData = React.useCallback(async () => {
+    // Kiểm tra token và businessId trước khi gọi API
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    if (!businessId) {
+      setLoading(false);
+      Swal.fire({
+        icon: "error",
+        text: "Không tìm thấy ID doanh nghiệp",
+      });
+      return;
+    }
+
     const requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-        "Content-Type": "application/json", // Replace with the appropriate content type
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     };
     setLoading(true);
-    const response = await fetch(
-      `${apiUrl}/business-profile/business-profile/${businessId}`,
-      requestOptions
-    );
+    try {
+      const response = await fetch(
+        `${apiUrl}/business-profile-management/business-profile/${businessId}`,
+        requestOptions
+      );
 
-    const data = await response.json();
+      // Log response để debug
+      console.log("=== API Response Profile từ Backend ===");
+      console.log("Response status:", response.status);
+      console.log("Response statusText:", response.statusText);
+      console.log("Response ok:", response.ok);
+      console.log("URL:", `${apiUrl}/business-profile-management/business-profile/${businessId}`);
+      
+      // Kiểm tra lỗi 401 - Unauthorized
+      if (response.status === 401) {
+        localStorage.removeItem("tokenAdmin");
+        localStorage.removeItem("admin");
+        window.location.href = "/login";
+        return;
+      }
 
-    if (data) {
-      setData(data.data);
-      setLoading(false);
-    } else {
+      // Kiểm tra lỗi 400 - Bad Request
+      if (response.status === 400) {
+        const errorData = await response.json();
+        console.error("Bad Request Error:", errorData);
+        console.error("Error message:", errorData.message);
+        console.error("Error details:", errorData);
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: errorData.message || "Không tìm thấy thông tin doanh nghiệp",
+        });
+        return;
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("HTTP Error:", errorData);
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi",
+          text: errorData.message || `Lỗi ${response.status}`,
+        });
+        return;
+      }
+
+      const data = await response.json();
+      
+      // Log toàn bộ response từ BE
+      console.log("Full response:", data);
+      console.log("Status:", data.statusCode);
+      console.log("Message:", data.message);
+      console.log("Data:", data.data);
+      console.log("=== End Profile API Response Log ===");
+
+      if (data && data.data) {
+        setData(data.data);
+      } else {
+        setData(null);
+        Swal.fire({
+          icon: "warning",
+          text: data.message || "Không có dữ liệu",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
       Swal.fire({
         icon: "error",
-        text: data.message,
+        title: "Lỗi",
+        text: "Không thể tải thông tin doanh nghiệp",
       });
+    } finally {
+      setLoading(false);
     }
   }, [apiUrl, token, businessId]);
 

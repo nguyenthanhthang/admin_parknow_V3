@@ -56,7 +56,7 @@ const ParkingImage = () => {
   const requestOptions = {
     method: "GET",
     headers: {
-      Authorization: `bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
   };
@@ -120,7 +120,7 @@ const ParkingImage = () => {
   //       const requestOptions = {
   //         method: "DELETE",
   //         headers: {
-  //           Authorization: `bearer ${token}`,
+  //           Authorization: `Bearer ${token}`,
   //           "Content-Type": "application/json",
   //         },
   //       };

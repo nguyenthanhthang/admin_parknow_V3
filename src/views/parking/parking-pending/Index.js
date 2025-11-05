@@ -16,7 +16,7 @@ const ParkingAll = (props) => {
     const requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        Authorization: `Bearer ${token}`, // Replace `token` with your actual bearer token
         "Content-Type": "application/json", // Replace with the appropriate content type
       },
     };

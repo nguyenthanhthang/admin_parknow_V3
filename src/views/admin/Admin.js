@@ -16,6 +16,11 @@ import { useRef } from "react";
 import { useEffect } from "react";
 
 const renderAvatarCell = (params) => {
+  if (!params || !params.row) {
+    return (
+      <Avatar src="https://static.vecteezy.com/system/resources/previews/002/002/403/original/man-with-beard-avatar-character-isolated-icon-free-vector.jpg" />
+    );
+  }
   return (
     <>
       {params.value ? (
@@ -32,6 +37,15 @@ const getCellValue = (params) => {
 };
 
 const renderCellStatus = (params) => {
+  if (!params || !params.row) {
+    return (
+      <Chip
+        color="secondary"
+        label="-------"
+        sx={{ padding: "8px", color: "#fff", fontWeight: "bold" }}
+      />
+    );
+  }
   if (params.value === true) {
     return (
       <Chip
@@ -50,6 +64,13 @@ const renderCellStatus = (params) => {
       />
     );
   }
+  return (
+    <Chip
+      color="secondary"
+      label="-------"
+      sx={{ padding: "8px", color: "#fff", fontWeight: "bold" }}
+    />
+  );
 };
 
 const formatDateOfBirth = (dateOfBirth) => {
@@ -60,7 +81,19 @@ const formatDateOfBirth = (dateOfBirth) => {
 };
 
 const columns = [
-  { field: "userId", headerName: "ID", width: 100 },
+  {
+    field: "userId",
+    headerName: "ID",
+    width: 100,
+    valueGetter: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.userId || params.row.id || "-------";
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.userId || params.row.id || "-------";
+    },
+  },
   {
     field: "avatar",
     headerName: "Ảnh",
@@ -74,21 +107,86 @@ const columns = [
     description: "This column has a value getter and is not sortable.",
     // sortable: false,
     width: 320,
-    valueGetter: (params) => `${params.row.name || ""}`,
+    valueGetter: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.name || "-------";
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.name || "-------";
+    },
   },
-  { field: "email", headerName: "Email", width: 360 },
+  {
+    field: "email",
+    headerName: "Email",
+    width: 360,
+    valueGetter: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.email || "-------";
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.email || "-------";
+    },
+  },
   {
     field: "dateOfBirth",
     headerName: "Ngày sinh",
     width: 280,
-    valueGetter: (params) => formatDateOfBirth(params.row.dateOfBirth),
+    valueGetter: (params) => {
+      if (!params || !params.row) return "-------";
+      return formatDateOfBirth(params.row.dateOfBirth);
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) return "-------";
+      return formatDateOfBirth(params.row.dateOfBirth);
+    },
   },
   {
     field: "isActive",
     headerName: "Hoạt động",
     width: 200,
-    valueGetter: getCellValue,
-    renderCell: renderCellStatus,
+    valueGetter: (params) => {
+      if (!params || !params.row) return null;
+      return params.row.isActive;
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) {
+        return (
+          <Chip
+            color="secondary"
+            label="-------"
+            sx={{ padding: "8px", color: "#fff", fontWeight: "bold" }}
+          />
+        );
+      }
+      const isActive = params.row.isActive;
+      if (isActive === true) {
+        return (
+          <Chip
+            color="success"
+            label="Đang hoạt động"
+            sx={{ padding: "10px", color: "#fff", fontWeight: "bold" }}
+          />
+        );
+      }
+      if (isActive === false) {
+        return (
+          <Chip
+            color="secondary"
+            label="Không hoạt động"
+            sx={{ padding: "8px", color: "#fff", fontWeight: "bold" }}
+          />
+        );
+      }
+      return (
+        <Chip
+          color="secondary"
+          label="-------"
+          sx={{ padding: "8px", color: "#fff", fontWeight: "bold" }}
+        />
+      );
+    },
     sortable: false,
     disableColumnMenu: true,
   },
@@ -99,7 +197,10 @@ const columns = [
     sortable: false,
     disableColumnMenu: true,
     align: "center",
-    renderCell: (params) => <Menu id={params.id} />,
+    renderCell: (params) => {
+      if (!params || !params.row) return null;
+      return <Menu id={params.id} />;
+    },
   },
 ];
 
@@ -162,7 +263,9 @@ export default function MyAdmin(props) {
               rows={rows}
               rowHeight={70}
               autoHeight
-              getRowId={(row) => row.userId}
+              getRowId={(row) =>
+                row?.userId || row?.id || `row-${Math.random()}`
+              }
               columns={columns}
               initialState={{
                 pagination: {

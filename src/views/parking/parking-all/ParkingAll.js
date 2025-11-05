@@ -27,7 +27,10 @@ export default function MyParkingAll(props) {
   const token = localStorage.getItem("token");
 
   const getCellValue = (params) => {
-    return params.value == null ? false : params.value;
+    if (!params || params.value === null || params.value === undefined) {
+      return "-------";
+    }
+    return params.value;
   };
 
   const handleSwitchToggle = async (params, field) => {
@@ -47,7 +50,7 @@ export default function MyParkingAll(props) {
             const requestOptions = {
               method: "DELETE",
               headers: {
-                Authorization: `bearer ${token}`,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
             };
@@ -75,6 +78,9 @@ export default function MyParkingAll(props) {
   };
 
   const renderCellIsActive = (params) => {
+    if (!params || !params.row) {
+      return null;
+    }
     const handleChange = () => {
       handleSwitchToggle(params, "isActive");
     };
@@ -85,6 +91,9 @@ export default function MyParkingAll(props) {
   };
 
   const renderCellStatus = (params) => {
+    if (!params) {
+      return null;
+    }
     if (params.value === true) {
       return (
         <Chip
@@ -105,22 +114,70 @@ export default function MyParkingAll(props) {
   };
 
   const columns = [
-    { field: "parkingId", headerName: "ID", width: 80 },
+    {
+      field: "parkingId",
+      headerName: "ID",
+      width: 80,
+      valueFormatter: (value) => {
+        return value || "-------";
+      },
+      renderCell: (params) => {
+        if (!params || !params.row) {
+          return <div>-------</div>;
+        }
+        const id = params.row?.parkingId || params.value || "-------";
+        return <div>{id}</div>;
+      },
+    },
     {
       field: "name",
       headerName: "Tên bãi",
       description: "This column has a value getter and is not sortable.",
       // sortable: false,
       width: 280,
-      valueGetter: (params) => `${params.row.name || ""}`,
+      valueFormatter: (value) => {
+        return value || "-------";
+      },
+      renderCell: (params) => {
+        if (!params || !params.row) {
+          return <div>-------</div>;
+        }
+        const name = params.row?.name || params.value || "-------";
+        return <div>{name}</div>;
+      },
     },
-    { field: "address", headerName: "Địa chỉ", width: 400 },
+    {
+      field: "address",
+      headerName: "Địa chỉ",
+      width: 400,
+      valueFormatter: (value) => {
+        return value || "-------";
+      },
+      renderCell: (params) => {
+        if (!params || !params.row) {
+          return <div>-------</div>;
+        }
+        const address = params.row?.address || params.value || "-------";
+        return <div>{address}</div>;
+      },
+    },
     {
       field: "carSpot",
       headerName: "Tổng số vị trí",
       // type: "number",
       width: 210,
-      valueGetter: getCellValue,
+      valueFormatter: (value) => {
+        return value !== null && value !== undefined ? value : "-------";
+      },
+      renderCell: (params) => {
+        if (!params || !params.row) {
+          return <div>-------</div>;
+        }
+        const carSpot = params.row?.carSpot !== null && params.row?.carSpot !== undefined 
+          ? params.row.carSpot 
+          : (params.value !== null && params.value !== undefined ? params.value : "-------");
+        return <div>{carSpot}</div>;
+      },
     },
     {
       field: "isFull",
@@ -145,7 +202,12 @@ export default function MyParkingAll(props) {
       sortable: false,
       disableColumnMenu: true,
       align: "center",
-      renderCell: (params) => <Menu value={params.value} id={params.id} />,
+      renderCell: (params) => {
+        if (!params || !params.row) {
+          return null;
+        }
+        return <Menu value={params.value} id={params.id} />;
+      },
     },
   ];
 
@@ -158,14 +220,18 @@ export default function MyParkingAll(props) {
           </SubCard>
         </Grid>
 
-        {rows ? (
+        {rows && Array.isArray(rows) && rows.length > 0 ? (
           <div id="outer-div">
             <DataGrid
-              rows={rows}
+              rows={rows.filter((row) => row && (row.parkingId || row.id))} // Filter out null/undefined rows
               rowHeight={70}
               autoHeight
-              getRowId={(row) => row.parkingId}
+              getRowId={(row) => {
+                if (!row) return `row-${Math.random()}`;
+                return row.parkingId || row.id || `row-${Math.random()}`;
+              }}
               columns={columns}
+              disableRowSelectionOnClick
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 10 },

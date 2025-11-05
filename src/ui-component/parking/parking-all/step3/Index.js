@@ -74,7 +74,7 @@ const ParkingModalInFloor = () => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `bearer ${token}`,
+                Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify(body),
             });
@@ -105,7 +105,7 @@ const ParkingModalInFloor = () => {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `bearer ${token}`,
+                  Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(body),
               }).then((response) => {

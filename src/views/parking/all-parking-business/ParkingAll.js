@@ -47,7 +47,7 @@ export default function MyParkingAll(props) {
             const requestOptions = {
               method: "DELETE",
               headers: {
-                Authorization: `bearer ${token}`,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
             };

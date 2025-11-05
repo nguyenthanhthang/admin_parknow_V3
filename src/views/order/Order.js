@@ -47,41 +47,78 @@ const formatPrice = (number) => {
 };
 
 const columns = [
-  { field: "billId", headerName: "ID", width: 100 },
+  { 
+    field: "billId", 
+    headerName: "ID", 
+    width: 100,
+    valueGetter: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.billId || params.row.id || "-------";
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.billId || params.row.id || "-------";
+    },
+  },
   {
     field: "price",
     headerName: "Số tiền",
     width: 260,
-    renderCell: (params) =>
-      params.row.price ? formatPrice(params.row.price) : "-----",
+    renderCell: (params) => {
+      if (!params || !params.row) return "-----";
+      return params.row.price ? formatPrice(params.row.price) : "-----";
+    },
     sortable: false,
   },
   {
     field: "businessId",
     headerName: "Mã doanh nghiệp",
     width: 200,
-    valueGetter: (params) => `${params.row.businessName || ""}`,
+    valueGetter: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.businessId || params.row.id || "-------";
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.businessId || params.row.id || "-------";
+    },
   },
   {
     field: "businessName",
     headerName: "Tên doanh nghiệp",
     description: "This column has a value getter and is not sortable.",
-    // sortable: false,
     width: 400,
-    valueGetter: (params) => `${params.row.businessName || ""}`,
+    valueGetter: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.businessName || "-------";
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) return "-------";
+      return params.row.businessName || "-------";
+    },
   },
   {
     field: "time",
     headerName: "Ngày thanh toán",
     width: 320,
-    valueGetter: (params) => formatDate(params.row.time),
+    valueGetter: (params) => {
+      if (!params || !params.row) return "-------";
+      return formatDate(params.row.time);
+    },
+    renderCell: (params) => {
+      if (!params || !params.row) return "-------";
+      return formatDate(params.row.time);
+    },
   },
   {
     field: "status",
     headerName: "Trạng thái",
     width: 200,
     valueGetter: getCellValue,
-    renderCell: (params) => renderCellStatus(params.row.status),
+    renderCell: (params) => {
+      if (!params || !params.row) return "-------";
+      return renderCellStatus(params.row.status);
+    },
     sortable: false,
     disableColumnMenu: true,
   },
@@ -105,21 +142,61 @@ export default function Order() {
   const token = localStorage.getItem("tokenAdmin");
 
   const fetchData = React.useCallback(async () => {
+    // Kiểm tra token trước khi gọi API
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     const requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-        "Content-Type": "application/json", // Replace with the appropriate content type
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     };
     setLoading(true);
-    const response = await fetch(
-      `${apiUrl}/bill-management?pageNo=1&pageSize=11`,
-      requestOptions
-    );
-    const data = await response.json();
-    setRows(data.data);
-    setLoading(false);
+    try {
+      const response = await fetch(
+        `${apiUrl}/bill-management?pageNo=1&pageSize=11`,
+        requestOptions
+      );
+      
+      // Kiểm tra lỗi 401 - Unauthorized
+      if (response.status === 401) {
+        localStorage.removeItem("tokenAdmin");
+        localStorage.removeItem("admin");
+        window.location.href = "/login";
+        return;
+      }
+
+      // Tạm thời bỏ qua lỗi 500 - Internal Server Error
+      if (response.status === 500) {
+        setRows([]);
+        setLoading(false);
+        return;
+      }
+
+      if (!response.ok) {
+        setRows([]);
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+      
+      if (data.data && Array.isArray(data.data)) {
+        // Filter out null/undefined rows và đảm bảo có billId
+        const validRows = data.data.filter((row) => row && (row.billId || row.id));
+        setRows(validRows);
+      } else {
+        setRows([]);
+      }
+    } catch (error) {
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
   }, [apiUrl, token]);
 
   useEffect(() => {
@@ -150,7 +227,7 @@ export default function Order() {
               rows={rows}
               rowHeight={70}
               autoHeight
-              getRowId={(row) => row.billId}
+              getRowId={(row) => row?.billId || row?.id || `row-${Math.random()}`}
               columns={columns}
               initialState={{
                 pagination: {

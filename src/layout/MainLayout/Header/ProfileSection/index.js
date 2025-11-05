@@ -71,7 +71,7 @@ const ProfileSection = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     };
     const response = await fetch(

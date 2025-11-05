@@ -1,11 +1,12 @@
+// @use rules must be written before any other rules
+@use "themes-vars.module.scss" as *;
+
 // color variants
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import "themes-vars.module.scss";
-
-// third-party
+// third-party (CSS files - phải dùng @import)
 @import "~react-perfect-scrollbar/dist/css/styles.css";
 
 // ==============================|| LIGHT BOX ||============================== //

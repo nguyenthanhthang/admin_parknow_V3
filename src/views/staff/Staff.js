@@ -116,10 +116,29 @@ export default function Staff() {
   const token = localStorage.getItem("tokenAdmin");
   const user = localStorage.getItem("admin"); // Set the authentication status here
   const userData = JSON.parse(user);
+  const signalRUrl = config.signalRUrl;
+
+  const fetchData = React.useCallback(async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // Replace `token` with your actual bearer token
+        "Content-Type": "application/json", // Replace with the appropriate content type
+      },
+    };
+    setLoading(true);
+    const response = await fetch(
+      `${apiUrl}/keeper-management/manager?pageNo=1&pageSize=11&managerId=${userData}`,
+      requestOptions
+    );
+    const data = await response.json();
+    setRows(data.data);
+    setLoading(false);
+  }, [apiUrl, token, userData]);
 
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(config.signalRUrl)
+      .withUrl(signalRUrl)
       .build();
     console.log("connection", connection);
 
@@ -137,26 +156,7 @@ export default function Staff() {
     return () => {
       connection.stop();
     };
-  }, []);
-
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
-      "Content-Type": "application/json", // Replace with the appropriate content type
-    },
-  };
-
-  const fetchData = async () => {
-    setLoading(true);
-    const response = await fetch(
-      `${apiUrl}/keeper-management/manager?pageNo=1&pageSize=11&managerId=${userData}`,
-      requestOptions
-    );
-    const data = await response.json();
-    setRows(data.data);
-    setLoading(false);
-  };
+  }, [fetchData, signalRUrl]);
 
   if (loading) {
     // Render the Skeleton components or any other loading indicator

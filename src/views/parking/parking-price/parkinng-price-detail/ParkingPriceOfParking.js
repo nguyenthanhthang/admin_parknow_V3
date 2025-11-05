@@ -3,7 +3,6 @@ import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState, useCallback } from "react";
 import { ImFilesEmpty } from "react-icons/im";
 import { useParams } from "react-router";
-import Loading from "ui-component/back-drop/Loading";
 import MainCard from "ui-component/cards/MainCard";
 import SubCardStaff from "ui-component/cards/SubCardStaff";
 import ApplyParking from "ui-component/modal/parking-price-apply/ApplyParking";
@@ -14,7 +13,6 @@ const ParkingPriceOfParking = () => {
   const { priceId } = useParams();
 
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isDetail, setIsDetail] = useState(false);
 
@@ -30,7 +28,7 @@ const ParkingPriceOfParking = () => {
     const requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `bearer ${token}`, // Replace `token` with your actual bearer token
+        Authorization: `Bearer ${token}`, // Replace `token` with your actual bearer token
         "Content-Type": "application/json", // Replace with the appropriate content type
       },
     };
@@ -65,12 +63,7 @@ const ParkingPriceOfParking = () => {
 
   return (
     <>
-      {loading ? (
-        <>
-          <Loading loading={loading} />
-        </>
-      ) : (
-        <MainCard title={"Gói cước áp dụng cho bãi xe"}>
+      <MainCard title={"Gói cước áp dụng cho bãi xe"}>
           <Grid item xs={12}>
             <SubCardStaff
               startComponent={<SearchSection />}
@@ -113,7 +106,6 @@ const ParkingPriceOfParking = () => {
             </>
           )}
         </MainCard>
-      )}
 
       <ApplyParking
         isOpen={isOpen}
