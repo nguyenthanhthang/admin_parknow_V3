@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "yarn build",
   "outputDirectory": "build",
-  "installCommand": "npm install",
-  "devCommand": "npm start",
+  "installCommand": "yarn install",
+  "devCommand": "yarn start",
   "framework": "create-react-app",
   "rewrites": [
     {

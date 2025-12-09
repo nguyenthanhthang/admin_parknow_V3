@@ -70,6 +70,9 @@ const FirebaseLogin = ({ ...others }) => {
     try {
       fetch(`${apiUrl}/admin-authentication`, requestOptions)
         .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
           return response.json();
         })
         .then((data) => {
@@ -81,7 +84,7 @@ const FirebaseLogin = ({ ...others }) => {
             Swal.fire({
               icon: "error",
               title: "Đăng nhập thất bại",
-              text: res.message,
+              text: res.message || "Đã xảy ra lỗi khi đăng nhập",
             });
           } else {
             const parts = data.data.token.split(".");
@@ -111,11 +114,23 @@ const FirebaseLogin = ({ ...others }) => {
             }
           }
           // console.log("res", res);
+        })
+        .catch((error) => {
+          console.error("Login error:", error);
+          Swal.close();
+          Swal.fire({
+            icon: "error",
+            title: "Đăng nhập thất bại",
+            text: error.message || "Không thể kết nối đến server. Vui lòng thử lại sau.",
+          });
         });
     } catch (error) {
+      console.error("Login error:", error);
+      Swal.close();
       Swal.fire({
         icon: "error",
-        text: error,
+        title: "Đăng nhập thất bại",
+        text: error.message || "Đã xảy ra lỗi không mong muốn",
       });
     }
   };

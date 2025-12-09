@@ -58,6 +58,9 @@ const Page = () => {
     try {
       fetch(`${apiUrl}/admin-authentication`, requestOptions)
         .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
           return response.json();
         })
         .then((data) => {
@@ -69,7 +72,7 @@ const Page = () => {
             Swal.fire({
               icon: "error",
               title: "Đăng nhập thất bại",
-              text: res.message,
+              text: res.message || "Đã xảy ra lỗi khi đăng nhập",
             });
           } else {
             const parts = data.data.token.split(".");
@@ -96,9 +99,24 @@ const Page = () => {
               // window.location.reload();
             }
           }
+        })
+        .catch((error) => {
+          console.error("Login error:", error);
+          Swal.close();
+          Swal.fire({
+            icon: "error",
+            title: "Đăng nhập thất bại",
+            text: error.message || "Không thể kết nối đến server. Vui lòng thử lại sau.",
+          });
         });
     } catch (error) {
-      console.log("error", error);
+      console.error("Login error:", error);
+      Swal.close();
+      Swal.fire({
+        icon: "error",
+        title: "Đăng nhập thất bại",
+        text: error.message || "Đã xảy ra lỗi không mong muốn",
+      });
     }
   };
 
